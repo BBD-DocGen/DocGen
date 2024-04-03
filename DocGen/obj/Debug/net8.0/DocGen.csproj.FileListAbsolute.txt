@@ -1,0 +1,15 @@
+D:\Level-up Project\DocGen\DocGen\bin\Debug\net8.0\DocGen.exe
+D:\Level-up Project\DocGen\DocGen\bin\Debug\net8.0\DocGen.deps.json
+D:\Level-up Project\DocGen\DocGen\bin\Debug\net8.0\DocGen.runtimeconfig.json
+D:\Level-up Project\DocGen\DocGen\bin\Debug\net8.0\DocGen.dll
+D:\Level-up Project\DocGen\DocGen\bin\Debug\net8.0\DocGen.pdb
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.GeneratedMSBuildEditorConfig.editorconfig
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.AssemblyInfoInputs.cache
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.AssemblyInfo.cs
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.csproj.CoreCompileInputs.cache
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.sourcelink.json
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.dll
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\refint\DocGen.dll
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.pdb
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\DocGen.genruntimeconfig.cache
+D:\Level-up Project\DocGen\DocGen\obj\Debug\net8.0\ref\DocGen.dll

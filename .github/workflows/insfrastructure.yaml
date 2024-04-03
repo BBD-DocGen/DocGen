@@ -3,7 +3,7 @@ name: AWS-Infrastructure
 on:
   push:
     branches:
-      - tshego/feat/BGP-50-aws-deployment
+      - main
 
 env:
   AWS_REGION: "eu-west-1"

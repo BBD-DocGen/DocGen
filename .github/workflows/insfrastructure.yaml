@@ -1,0 +1,49 @@
+name: AWS-Infrastructure
+
+on:
+  push:
+    branches:
+      - tshego/feat/BGP-50-aws-deployment
+
+env:
+  AWS_REGION: "eu-west-1"
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+    ConfigureAwsAndTerraform:
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory: infrastructure
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v2
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                    aws-region: ${{ env.AWS_REGION }}
+                    aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+                    aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                    audience: sts.amazonaws.com
+
+            - name: Check out terraform
+              uses: hashicorp/setup-terraform@v3
+ 
+            - name: Terraform Init
+              run: terraform init
+
+            - name: Terraform Plan
+              id: plan
+              run: terraform plan
+
+            - name: Terraform Apply
+              run: terraform apply -auto-approve
+
+
+  

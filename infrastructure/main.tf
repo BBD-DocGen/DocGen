@@ -204,3 +204,7 @@ resource "aws_elastic_beanstalk_environment" "docgen-elastic-beanstalk-env" {
 
   depends_on = [aws_security_group.docgen-instance-sg, aws_security_group.database_sg]
 }
+
+resource "aws_s3_bucket" "docgen-documents-20240403" {
+  bucket = "docgen-documents-20240403"
+}

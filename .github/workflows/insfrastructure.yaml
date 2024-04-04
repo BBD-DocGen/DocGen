@@ -51,7 +51,7 @@ jobs:
       runs-on: ubuntu-latest
       defaults:
         run:
-          working-directory: DocGenApi/DocGen.API
+          working-directory: DocGenApi
       steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -59,7 +59,7 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       - name: Publish
-        run: dotnet publish WebApi -o site
+        run: dotnet publish DocGen.API -o site
       - name: Generate deployment package
         run: cd site; zip -r ../deploy.zip . -x '*.git*'; cd ..
       - name: Upload .NET to artifact

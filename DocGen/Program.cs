@@ -9,7 +9,9 @@ namespace  Program
 
       Console.WriteLine("********************************************************");
       Console.WriteLine("********************************************************");
-      Console.WriteLine("Welcome to DocGen Generator!");
+      Console.WriteLine("************                               *************");
+      Console.WriteLine("************  Welcome to DocGen Generator! *************");
+      Console.WriteLine("************                               *************");
       Console.WriteLine("********************************************************");
       Console.WriteLine("********************************************************");
       Console.WriteLine();

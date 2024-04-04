@@ -71,5 +71,11 @@ jobs:
 
         - name: Publish
           run: dotnet publish DocGen.API.csproj -c Release -o release --nologo
+
+        - name: Upload Build Artifact
+          uses: actions/upload-artifact@v2
+          with:
+            name: Application_Artifact
+            path: /home/runner/work/DocGen/DocGen/DocGenApi/DocGen.API/release/
                  
 

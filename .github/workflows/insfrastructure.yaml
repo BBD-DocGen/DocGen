@@ -77,5 +77,30 @@ jobs:
           with:
             name: Application_Artifact
             path: /home/runner/work/DocGen/DocGen/DocGenApi/DocGen.API/release/
+
+    ServerDeployment:
+      needs: build_and_create_Artifact
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: DocGenApi/DocGen.API
+      steps:
+        - uses: actions/checkout@v4
+  
+        - name: Download Artifacts
+          uses: actions/download-artifact@v3
+          with:
+            name: Application_Artifact
+  
+        - name: Deploy to EB
+          uses: einaregilsson/beanstalk-deploy@v21
+          with:
+            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            application_name: docgen-application
+            environment_name: docgen-elastic-beanstalk-env
+            version_label: ${{ github.run_number }}
+            region: ${{ env.AWS_REGION }}
+            deployment_package: Application_Artifact.zip
                  
 

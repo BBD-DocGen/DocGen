@@ -48,6 +48,9 @@ jobs:
     build_and_create_Artifact:
       needs: ConfigureAwsAndTerraform
       runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: DocGenApi/DocGen.API
       steps:
         - name: Checkout repo
           uses: actions/checkout@v3

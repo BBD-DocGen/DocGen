@@ -45,45 +45,25 @@ jobs:
             - name: Terraform Apply
               run: terraform apply -auto-approve
 
-    DeployAPI:
-      name: Build & Deploy
+    build_and_create_Artifact:
       needs: ConfigureAwsAndTerraform
       runs-on: ubuntu-latest
-      defaults:
-        run:
-          working-directory: DocGenApi
       steps:
-      - name: Checkout source code
-        uses: actions/checkout@v2
-      - uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.0.x'
-      - name: Publish
-        run: dotnet publish DocGen.API -o site
-      - name: Generate deployment package
-        run: cd site; zip -r ../deploy.zip . -x '*.git*'; cd ..
-      - name: Upload .NET to artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dotnet-zip
-          path: deploy.zip
-      - name: Setup EB CLI
-        run: |
-          python --version
-          pip --version
-          pip install awsebcli --upgrade --user
-          eb --version
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2 # More information on this action can be found below in the 'AWS Credentials' section
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          audience: sts.amazonaws.com
-      - name: Deploy to EB
-        run: eb deploy dotnet-env-dev --staged
-
+        - name: Checkout repo
+          uses: actions/checkout@v3
       
+        - name: Setup .NET Core
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: 6.0.*
+      
+        - name: Install dependencies
+          run: dotnet restore
+      
+        - name: Build
+          run: dotnet build --configuration Release --no-restore
+      
+        - name: Test
+          run: dotnet test --no-restore --verbosity normal
+                 
 
-
-  

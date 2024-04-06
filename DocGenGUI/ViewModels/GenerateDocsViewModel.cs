@@ -37,36 +37,9 @@ namespace DocGen.ViewModels
 
         public void ExecuteSelectFile()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Filter = "cs files (*.cs)|*.cs|All files (*.*)|*.*";
-            fileDialog.ShowDialog();
+            GetFileViaDialog file = new GetFileViaDialog();
 
-            //Read the contents of the file into a stream
-            Stream fileStream = fileDialog.OpenFile();
-
-            using (StreamReader reader = new StreamReader(fileStream))
-            {
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                String pattern = "^\\s*(public|private)*\\s*(static)*\\s*(\\w+ \\w+)\\s?\\(.*\\).*$";
-                while ((line = reader.ReadLine()) != null) 
-                {
-                    if (!Regex.Match(line, pattern).Success) continue;
-
-                    sb.Append(line.Trim());
-                    sb.Append('\n');
-                }
-                FileContents = sb.ToString();
-            }
-        }
-
-        public async Task<string> generateDocs(string methodHeader)
-        {
-            StringBuilder sb = new StringBuilder();
-
-
-
-            return sb.ToString();
+            FileContents = file.getFileContents();
         }
     }
 }

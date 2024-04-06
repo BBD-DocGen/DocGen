@@ -101,6 +101,6 @@ jobs:
             environment_name: docgen-elastic-beanstalk-env
             version_label: ${{ github.run_number }}
             region: ${{ env.AWS_REGION }}
-            deployment_package: Application_Artifact.zip
+            deployment_package: *.zip
                  
 

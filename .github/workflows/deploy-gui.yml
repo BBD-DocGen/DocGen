@@ -48,6 +48,9 @@ jobs:
     
     - name: Publish to .exe
       run: dotnet publish
+    
+    - name: Set environment variables
+      run: dir
 
     - name: Create Github Release
       uses: ncipollo/release-action@v1.14.0

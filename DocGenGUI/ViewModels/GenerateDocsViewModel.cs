@@ -1,22 +1,13 @@
 ﻿using DocGen.Classes;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
+using DocGen.Models;
 using System.Windows.Input;
 
 namespace DocGen.ViewModels
 {
     internal class GenerateDocsViewModel : BaseViewModel
     {
-        private string _fileContents;
-        public string FileContents
+        private FileModel _fileContents;
+        public FileModel FileContents
         {
             get => _fileContents;
             set
@@ -27,19 +18,29 @@ namespace DocGen.ViewModels
         }
 
         public ICommand SelectFileCommand{ get; }
+        public ICommand SaveFileCommand { get; }
+
 
         public GenerateDocsViewModel()
         {
-            FileContents = "Docs Lol";
-
             SelectFileCommand = new RelayCommand((param) => ExecuteSelectFile());
+            SaveFileCommand = new RelayCommand((param) => ExecuteSaveFile());
+        }
+
+        public async void ExecuteSaveFile()
+        {
+            await S3.uploadFile("AnotherTestFile", @"C:\Users\bbdnet2862\Desktop\List.txt");
         }
 
         public void ExecuteSelectFile()
         {
             GetFileViaDialog file = new GetFileViaDialog();
-
             FileContents = file.getFileContents();
+
+            if (FileContents != null)
+            {
+                // ChatGPT the file
+            }
         }
     }
 }

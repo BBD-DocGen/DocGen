@@ -24,7 +24,7 @@
 
         <Button Content="Select file" Grid.Row="0" Grid.Column="0"  Command="{Binding SelectFileCommand}"/>
         <Button Content="Load file" Grid.Row="0" Grid.Column="3" />
-        <Button Content="Save file" Grid.Row="0" Grid.Column="4" />
+        <Button Content="Save file" Grid.Row="0" Grid.Column="4" Command="{Binding SaveFileCommand}"/>
 
         <Label Content="FileName.class" Grid.Row="1"/>
 

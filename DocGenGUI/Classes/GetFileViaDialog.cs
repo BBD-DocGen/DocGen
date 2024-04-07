@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using DocGen.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DocGen.Classes
 {
@@ -19,7 +21,7 @@ namespace DocGen.Classes
             FileDialog.Filter = "cs files (*.cs)|*.cs|All files (*.*)|*.*";
         }
 
-        public string getFileContents()
+        public FileModel? getFileContents()
         {
             FileDialog.ShowDialog();
 
@@ -29,17 +31,24 @@ namespace DocGen.Classes
 
                 using (StreamReader reader = new StreamReader(fileStream))
                 {
-                    return reader.ReadToEnd();
+                    return new FileModel
+                    {
+                        FileName = Path.GetFileNameWithoutExtension(FileDialog.FileName),
+                        FileContents = reader.ReadToEnd(),
+                        FilePath = FileDialog.FileName
+                    };
                 }
             } 
             catch (InvalidOperationException ex)
             {
-                return $"Invalid operation {ex.Message}";
+                MessageBox.Show($"Invalid operation {ex.Message}");
             }
             catch (Exception ex)
             {
-                return $"I don't know what happened {ex.Message}";
+                MessageBox.Show($"I don't know what happened {ex.Message}");
             }
+
+            return null;
         }
     }
 }

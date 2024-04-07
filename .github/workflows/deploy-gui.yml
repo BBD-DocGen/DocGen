@@ -44,8 +44,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Set environment variables
-      run: |
-        echo TODO
+      run: dir
     
     - name: Publish to .exe
       run: dotnet pubish

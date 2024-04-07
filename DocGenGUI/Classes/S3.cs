@@ -15,8 +15,9 @@ namespace DocGen.Classes
         private static string BUCKET_NAME = "docgen-documents-20240403";
         private static AmazonS3Client s3Client = new AmazonS3Client(
             new BasicAWSCredentials(
-                "AKIAVUJWQDTHCX7ED6NC",
-                "vT3LZM+juGfZkS69/d75pMU3S0h9fYEEmGIbaGD3"), 
+                Environment.GetEnvironmentVariable("AWS_ACCESS_KEY"),
+                Environment.GetEnvironmentVariable("AWS_SECRET_KEY")
+            ),
             Amazon.RegionEndpoint.EUWest1
         );
 

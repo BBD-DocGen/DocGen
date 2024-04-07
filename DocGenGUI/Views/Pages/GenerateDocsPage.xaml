@@ -28,6 +28,6 @@
 
         <Label Content="FileName.class" Grid.Row="1"/>
 
-        <TextBox Grid.ColumnSpan="5" Grid.Row="2" TextWrapping="Wrap" Text="{Binding FileContents}" BorderThickness="5"/>
+        <TextBox Grid.ColumnSpan="5" Grid.Row="2" TextWrapping="Wrap" Text="{Binding FileContents.FileSummary}" BorderThickness="5"/>
     </Grid>
 </Page>

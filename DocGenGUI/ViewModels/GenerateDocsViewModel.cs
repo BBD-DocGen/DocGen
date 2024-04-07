@@ -1,5 +1,7 @@
 ﻿using DocGen.Classes;
 using DocGen.Models;
+using OpenAI_API.Models;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DocGen.ViewModels
@@ -17,6 +19,17 @@ namespace DocGen.ViewModels
             }
         }
 
+        public string FileSummary
+        {
+            get => _fileContents.FileSummary;
+            set
+            {
+                _fileContents.FileSummary = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public ICommand SelectFileCommand{ get; }
         public ICommand SaveFileCommand { get; }
 
@@ -29,17 +42,26 @@ namespace DocGen.ViewModels
 
         public async void ExecuteSaveFile()
         {
-            await S3.uploadFile("AnotherTestFile", @"C:\Users\bbdnet2862\Desktop\List.txt");
+            if (FileContents == null) 
+            {
+                MessageBox.Show("Please select a file");
+                return;
+            }
+
+            await S3.uploadFile(
+                FileContents.FileName == null ? "NO_NAME" : FileContents.FileName,
+                FileContents.FileSummary == null ? "Nothing to summarize" : FileContents.FileSummary
+            );
         }
 
-        public void ExecuteSelectFile()
+        public async void ExecuteSelectFile()
         {
             GetFileViaDialog file = new GetFileViaDialog();
             FileContents = file.getFileContents();
 
             if (FileContents != null)
             {
-                // ChatGPT the file
+                FileSummary = await ChatGPT.getSummary(FileContents);
             }
         }
     }

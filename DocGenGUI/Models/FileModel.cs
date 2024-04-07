@@ -11,5 +11,6 @@ namespace DocGen.Models
         public string? FileName { get; set; }
         public string? FileContents { get; set; }
         public string? FilePath { get; set; }
+        public string? FileSummary { get; set; }
     }
 }

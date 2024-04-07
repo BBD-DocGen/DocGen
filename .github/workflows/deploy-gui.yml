@@ -1,0 +1,54 @@
+name: Deploy DocGen GUI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  paths:
+    - DocGenGUI/**
+
+jobs:
+  deployGUI:
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: .\DocGenGUI
+
+    runs-on: windows-latest
+
+    env:
+      APP_NAME: bean-index-cli
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Set environment variables
+      run: |
+        echo TODO
+    
+    - name: Publish to .exe
+      run: dotnet pubish
+
+    - name: Create Github Release
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        tag: Release-${{ github.run_number }}
+        artifacts: ${{ github.workspace }}\bin\Debug\net6.0-windows\publish\DocGen.exe
+        replacesArtifacts: true
+        token: ${{ github.token }}
+        commit: ${{ env.GITHUB_SHA }}
+        allowUpdates: true

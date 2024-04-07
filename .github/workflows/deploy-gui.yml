@@ -47,7 +47,7 @@ jobs:
       run: dir
     
     - name: Publish to .exe
-      run: dotnet pubish
+      run: dotnet publish
 
     - name: Create Github Release
       uses: ncipollo/release-action@v1.14.0

@@ -2,11 +2,10 @@ name: Deploy DocGen GUI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  paths:
-    - DocGenGUI/**
+    branches:
+      - main
+    paths:
+      - DocGenGUI/**
 
 jobs:
   deployGUI:

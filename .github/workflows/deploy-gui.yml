@@ -25,7 +25,11 @@ jobs:
     runs-on: windows-latest
 
     env:
-      APP_NAME: bean-index-cli
+      APP_NAME: DocGen
+      
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
     - name: Checkout

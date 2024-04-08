@@ -48,7 +48,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Set environment variables
-      run: dir
+      run: pwd
     
     - name: Publish to .exe
       run: dotnet publish

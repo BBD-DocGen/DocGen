@@ -17,7 +17,7 @@ permissions:
 
 jobs:
     ConfigureAwsAndTerraform:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         defaults:
           run:
             working-directory: infrastructure
@@ -42,16 +42,13 @@ jobs:
             - name: Terraform Plan
               id: plan
               run: terraform plan
-            
-            - name: Terraform Destroy
-              run: terraform destroy -auto-approve
 
             - name: Terraform Apply
               run: terraform apply -auto-approve
 
     build_and_create_Artifact:
       needs: ConfigureAwsAndTerraform
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       defaults:
         run:
           working-directory: DocGenApi/DocGen.API
@@ -89,7 +86,7 @@ jobs:
 
     ServerDeployment:
       needs: build_and_create_Artifact
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       defaults:
         run:
           working-directory: DocGenApi/DocGen.API

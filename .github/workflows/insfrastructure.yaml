@@ -62,16 +62,16 @@ jobs:
             dotnet-version: 8.0.*
       
         - name: Install dependencies
-          run: dotnet restore
+          run: dotnet restore DocGen.API.csproj
       
         - name: Build
-          run: dotnet build --configuration Release --no-restore
+          run: dotnet build DocGen.API.csproj
       
         - name: Test
           run: dotnet test --no-restore --verbosity normal
 
         - name: Publish
-          run: dotnet publish -c Release -o '${{ github.workspace }}/out'
+          run: dotnet publish -c Release -o '${{ github.workspace }}/out' DocGen.API.csproj
 
         - name: Zip Package
           run: |

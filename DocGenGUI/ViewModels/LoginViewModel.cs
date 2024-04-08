@@ -32,12 +32,11 @@ namespace DocGen.ViewModels
         public async void ExecuteLogin()
         {
             var loginResult = await client.LoginAsync();
-            MessageBox.Show(loginResult.AccessToken);
+
             if (loginResult.IsError == false)
             {
                 MainWindow.Instance.Main.Content = new GenerateDocsPage();
             }
-
         }
     }
 }

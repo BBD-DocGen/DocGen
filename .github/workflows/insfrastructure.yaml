@@ -71,18 +71,18 @@ jobs:
           run: dotnet test --no-restore --verbosity normal
 
         - name: Publish
-          run: dotnet publish -c Release -o '${{ github.workspace }}/out' DocGen.API.csproj
+          run: dotnet publish -c Release -o '${{ github.workspace }}/' DocGen.API.csproj
 
         - name: Zip Package
           run: |
-            cd ${{ github.workspace }}/out
+            cd ${{ github.workspace }}/
             Compress-Archive . ${{ env.DEPLOY_PACKAGE_NAME }}
 
         - name: Upload a Build Artifact
           uses: actions/upload-artifact@v3.1.0
           with:
             name: Application_Artifact
-            path: ${{ github.workspace }}/out/${{ env.DEPLOY_PACKAGE_NAME }}
+            path: ${{ github.workspace }}/${{ env.DEPLOY_PACKAGE_NAME }}
 
     ServerDeployment:
       needs: build_and_create_Artifact

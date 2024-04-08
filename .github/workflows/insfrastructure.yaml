@@ -75,8 +75,8 @@ jobs:
 
         - name: Zip Package
           run: |
-            cd ${{ github.workspace }}/out/out
-            Compress-Archive . ${{ env.DEPLOY_PACKAGE_NAME }}
+            cd ${{ github.workspace }}/out/
+            Compress-Archive *.* ${{ env.DEPLOY_PACKAGE_NAME }}
 
         - name: Upload a Build Artifact
           uses: actions/upload-artifact@v3.1.0

@@ -48,7 +48,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Set environment variables
-      run: pwd
+      run: dir
     
     - name: Publish to .exe
       run: dotnet publish
@@ -60,7 +60,7 @@ jobs:
       uses: ncipollo/release-action@v1.14.0
       with:
         tag: Release-${{ github.run_number }}
-        artifacts: bin\Debug\net6.0-windows\publish\*.exe
+        artifacts: ${{ github.workspace }}\DocGenGUI\bin\Debug\net6.0-windows\publish\*.exe
         replacesArtifacts: true
         token: ${{ github.token }}
         commit: ${{ env.GITHUB_SHA }}

@@ -47,20 +47,14 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    - name: Set environment variables
-      run: dir
-    
     - name: Publish to .exe
-      run: dotnet publish
-    
-    - name: Set environment variables
-      run: tree
+      run: dotnet publish -c Release --self-contained -p:PublishSingleFile=true 
 
     - name: Create Github Release
       uses: ncipollo/release-action@v1.14.0
       with:
         tag: Release-${{ github.run_number }}
-        artifacts: ${{ github.workspace }}\DocGenGUI\bin\Debug\net6.0-windows\publish\*.exe
+        artifacts: ${{ github.workspace }}\DocGenGUI\bin\Release\net6.0-windows\win-x64\publish\*.exe
         replacesArtifacts: true
         token: ${{ github.token }}
         commit: ${{ env.GITHUB_SHA }}

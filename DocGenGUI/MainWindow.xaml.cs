@@ -21,12 +21,19 @@ namespace DocGen
 
         private void SetEnvironmentVariable()
         {
-            string path = @"..\..\..\env";
-
-            foreach (string file in File.ReadAllLines(path))
+            try
             {
-                string [] keyValuePair = file.Split('=');
-                Environment.SetEnvironmentVariable(keyValuePair[0], keyValuePair[1]);
+                string path = @"..\..\..\env";
+
+                foreach (string file in File.ReadAllLines(path))
+                {
+                    string [] keyValuePair = file.Split('=');
+                    Environment.SetEnvironmentVariable(keyValuePair[0], keyValuePair[1]);
+                }
+            } 
+            catch (FileNotFoundException ex)
+            { 
+                MessageBox.Show(ex.Message);
             }
         }
     }

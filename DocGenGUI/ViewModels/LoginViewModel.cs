@@ -37,7 +37,6 @@ namespace DocGen.ViewModels
             {
                 MainWindow.Instance.Main.Content = new GenerateDocsPage();
             }
-
         }
     }
 }

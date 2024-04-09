@@ -31,7 +31,11 @@ namespace DocGen.ViewModels
 
         public async void ExecuteLogin()
         {
-            var loginResult = await client.LoginAsync();
+            var audience = "https://docgen.com";
+            var extraParameters = new Dictionary<string, string>();
+            extraParameters.Add("audience", audience);
+
+            var loginResult = await client.LoginAsync(extraParameters: extraParameters);
 
             if (loginResult.IsError == false)
             {

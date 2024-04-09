@@ -40,6 +40,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, RegisteredUserHandler>();
 builder.Services.AddScoped<IS3Service, S3Service>();
@@ -55,12 +56,14 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();

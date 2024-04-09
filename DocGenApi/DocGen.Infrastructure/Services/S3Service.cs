@@ -39,7 +39,6 @@ public class S3Service : IS3Service
         }
         catch (AmazonS3Exception e)
         {
-            // Handle AWS S3 specific exceptions
             throw new InvalidOperationException($"Error uploading object to S3: {e.Message}", e);
         }
     }

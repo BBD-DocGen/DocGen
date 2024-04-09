@@ -54,15 +54,14 @@ namespace DesignDocGen.API.Controllers
                 };
                 _dbContext.UploadDocument.Add(uploadedDocument);
                 await _dbContext.SaveChangesAsync();
-
-                // Generate summary with GPT Service
+                
                 var summary = await _openAIService.GenerateSummaryAsync(request.FileName, request.Content);
 
                 // Upload generated summary to S3
                 string summaryFileName = $"{request.FileName}_Summary.txt";
                 string summaryDocumentUrl = await _s3Service.UploadFileContentAsync(summary, bucketName, summaryFileName);
 
-                // Store generated document info in DB
+                // Store generated document
                 var generatedDocument = new GeneratedDocument
                 {
                     UpDocID = uploadedDocument.UpDocID,
@@ -72,8 +71,7 @@ namespace DesignDocGen.API.Controllers
                 };
                 _dbContext.GeneratedDocument.Add(generatedDocument);
                 await _dbContext.SaveChangesAsync();
-
-                // Return response to user
+                
                 return Ok(new { Content = summary });
             }
             catch (Exception ex)

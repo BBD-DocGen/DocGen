@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.307.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7" />
     <ProjectReference Include="..\DocGen.Core\DocGen.Core.csproj" />
   </ItemGroup>

@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DocGen.Core.Entities;
 
 public class GeneratedDocument
 {
+    [Key]
     public int GenDocID { get; set; }
     
     public int DocTypeID { get; set; }

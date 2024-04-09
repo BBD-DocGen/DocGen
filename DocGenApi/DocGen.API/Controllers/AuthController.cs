@@ -5,7 +5,7 @@ using DocGen.Infrastructure.Data;
 using DocGen.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-[Route("users")]
+[Route("api/v1")]
 [ApiController]
 public class AuthController : ControllerBase
 {
@@ -19,7 +19,7 @@ public class AuthController : ControllerBase
         _httpClientFactory = httpClientFactory;
     }
 
-    [HttpPost("login")]
+    [HttpPost("user")]
     public async Task<IActionResult> Login()
     {
         string accessToken = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();

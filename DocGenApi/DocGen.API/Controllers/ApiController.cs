@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DesignDocGen.API.Controllers
 {
-    [Route("api")]
+    [Route("api/v1")]
     [ApiController]
     public class ApiController : ControllerBase
     {
@@ -17,8 +17,17 @@ namespace DesignDocGen.API.Controllers
             });
         }
 
+        [HttpGet("registeredUser")]
+        [Authorize(Policy = "RegisteredUser")]
+        public IActionResult Registered()
+        {
+            {
+                return Ok(new { Message = "Hello you are registered and are allowed to enter" });
+            }
+        }
+
         [HttpGet("private")]
-        [Authorize]
+        [Authorize(Policy = "RegisteredUser")]
         public IActionResult Private()
         {
             return Ok(new

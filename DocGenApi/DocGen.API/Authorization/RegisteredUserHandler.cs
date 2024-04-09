@@ -19,15 +19,15 @@ public class RegisteredUserHandler : AuthorizationHandler<RegisteredUserRequirem
         using (var scope = _scopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var emailClaim = context.User.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            var subClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (emailClaim is null)
+            if (subClaim is null)
             {
                 context.Fail();
                 return;
             }
             
-            var userExists = await dbContext.User.AnyAsync(u => u.UserEmail == emailClaim);
+            var userExists = await dbContext.User.AnyAsync(u => u.UserSub == subClaim);
             if (userExists)
             {
                 context.Succeed(requirement);

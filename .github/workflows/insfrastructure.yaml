@@ -2,7 +2,7 @@ name: AWS-Infrastructure
 on:
   push:
     branches:
-      - tshego/bug/dotnet-version
+      - main
 
 env:
   AWS_REGION: "eu-west-1"

@@ -1,5 +1,4 @@
 name: AWS-Infrastructure
-
 on:
   push:
     branches:
@@ -9,6 +8,8 @@ env:
   AWS_REGION: "eu-west-1"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DEPLOY_PACKAGE_NAME: "dotnet-app-${{ github.sha }}.zip"
+  BUILD_ARTIFACT: "site.zip"
 
 permissions:
   id-token: write
@@ -45,5 +46,69 @@ jobs:
             - name: Terraform Apply
               run: terraform apply -auto-approve
 
+    build_and_create_Artifact:
+      needs: ConfigureAwsAndTerraform
+      runs-on: windows-latest
+      defaults:
+        run:
+          working-directory: DocGenApi/DocGen.API
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v3
+      
+        - name: Setup .NET Core
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: 8.0.*
+      
+        - name: Install dependencies
+          run: dotnet restore DocGen.API.csproj
+      
+        - name: Build
+          run: dotnet build DocGen.API.csproj
+      
+        - name: Test
+          run: dotnet test --no-restore --verbosity normal
 
+        - name: Publish
+          run: dotnet publish -c Release -o '${{ github.workspace }}/out' DocGen.API.csproj
+
+        - name: Zip Package
+          run: |
+            cd ${{ github.workspace }}/out/
+            Compress-Archive *.* ${{ env.BUILD_ARTIFACT }}
+            Copy-Item -Path '${{ github.workspace }}/DocGenApi/DocGen.API/aws-windows-deployment-manifest.json' -Destination ${{ github.workspace}}/out/
+            Compress-Archive *.zip, aws-windows-deployment-manifest.json ${{ env.DEPLOY_PACKAGE_NAME }} 
+
+        - name: Upload a Build Artifact
+          uses: actions/upload-artifact@v3.1.0
+          with:
+            name: Application_Artifact
+            path: ${{ github.workspace }}/out/${{ env.DEPLOY_PACKAGE_NAME }}
+
+    ServerDeployment:
+      needs: build_and_create_Artifact
+      runs-on: windows-latest
+      defaults:
+        run:
+          working-directory: DocGenApi/DocGen.API
+      steps:
+        - uses: actions/checkout@v4
   
+        - name: Download Artifacts
+          uses: actions/download-artifact@v3
+          with:
+            name: Application_Artifact
+  
+        - name: Deploy to EB
+          uses: einaregilsson/beanstalk-deploy@v21
+          with:
+            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            application_name: docgen-application
+            environment_name: docgen-elastic-beanstalk-env
+            version_label: ${{ github.run_number }}
+            region: ${{ env.AWS_REGION }}
+            deployment_package: ${{ env.DEPLOY_PACKAGE_NAME }}
+                 
+

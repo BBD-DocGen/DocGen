@@ -1,0 +1,1 @@
+web: dotnet ./DocGen.API.dll

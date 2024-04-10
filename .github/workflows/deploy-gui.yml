@@ -42,12 +42,26 @@ jobs:
     - name: Publish to .exe
       run: dotnet publish -c Release --self-contained -p:PublishSingleFile=true 
 
+    - name: Zip files
+      run: Compress-Archive .\bin\Release\net6.0-windows\win-x64\publish\ publish.zip
+
     - name: Create Github Release
       uses: ncipollo/release-action@v1.14.0
       with:
         tag: Release-${{ github.run_number }}
-        artifacts: ${{ github.workspace }}\DocGenGUI\bin\Release\net6.0-windows\win-x64\publish
+        artifacts: ${{ github.workspace }}\DocGenGUI\*zip
         replacesArtifacts: true
         token: ${{ github.token }}
         commit: ${{ env.GITHUB_SHA }}
         allowUpdates: true
+
+    - name: Download rel-monkey
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/Release-Monkey/release-monkey/releases/download/latest/rel-monkey.exe" -OutFile "rel-monkey.exe"
+    - name: Load Release Key
+      run: ./rel-monkey load-release-key "${{ secrets.RELEASE_KEY }}"
+
+    - name: Publish Release
+      shell: pwsh
+      run: ./rel-monkey create-release "Release-${{ github.run_number }}" "https://github.com/Release-Monkey/release-monkey/releases/tag/Release-${{ github.run_number }}"

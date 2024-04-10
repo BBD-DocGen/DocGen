@@ -61,7 +61,13 @@ namespace DocGen.ViewModels
 
             if (FileContents != null)
             {
-                FileSummary = await ChatGPT.getSummary(FileContents);
+                Content content = await Provider.uploadDocuAndGetGeneratedDoc(new Document
+                {
+                    fileName = FileContents.FileName, 
+                    content = FileContents.FileContents
+                });
+
+                FileSummary = content.content ?? "";
             }
         }
     }

@@ -1,5 +1,4 @@
 name: AWS-Infrastructure
-
 on:
   push:
     branches:

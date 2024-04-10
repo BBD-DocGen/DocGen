@@ -9,6 +9,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DEPLOY_PACKAGE_NAME: "dotnet-app-${{ github.sha }}.zip"
+  BUILD_ARTIFACT: "site.zip"
 
 permissions:
   id-token: write
@@ -75,7 +76,9 @@ jobs:
         - name: Zip Package
           run: |
             cd ${{ github.workspace }}/out/
-            Compress-Archive *.* ${{ env.DEPLOY_PACKAGE_NAME }}
+            Compress-Archive *.* ${{ env.BUILD_ARTIFACT }}
+            Copy-Item -Path ${{ github.workspace }}/aws-windows-deployment-manifest.json -Destination ${{ github.workspace}}/out/
+            Compress-Archive *.zip, aws-windows-deployment-manifest.json ${{ env.DEPLOY_PACKAGE_NAME }} 
 
         - name: Upload a Build Artifact
           uses: actions/upload-artifact@v3.1.0

@@ -76,7 +76,7 @@ jobs:
         - name: Zip Package
           run: |
             cd ${{ github.workspace }}/out/
-            Compress-Archive *.* ${{ env.BUILD_ARTIFACT }}
+            Compress-Archive *.*, ./runtimes ${{ env.BUILD_ARTIFACT }}
             Copy-Item -Path '${{ github.workspace }}/DocGenApi/DocGen.API/aws-windows-deployment-manifest.json' -Destination ${{ github.workspace}}/out/
             Compress-Archive *.zip, aws-windows-deployment-manifest.json ${{ env.DEPLOY_PACKAGE_NAME }} 
 

@@ -37,7 +37,7 @@ namespace DesignDocGen.API.Controllers
                 });
             }
             catch(Exception ex){
-                return Message = ex;
+                return StatusCode(500, new {  Error = "An unexpected error occurred.", DetailedError = ex.Message });
             }
         }
 

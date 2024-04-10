@@ -30,10 +30,15 @@ namespace DesignDocGen.API.Controllers
         [Authorize(Policy = "RegisteredUser")]
         public IActionResult Private()
         {
-            return Ok(new
-            {
-                Message = "Hello from a private endpoint! You need to be authenticated to see this."
-            });
+            try{
+                return Ok(new
+                {
+                    Message = "Hello from a private endpoint! You need to be authenticated to see this."
+                });
+            }
+            catch(Exception ex){
+                return Message = ex;
+            }
         }
 
         // View Claims

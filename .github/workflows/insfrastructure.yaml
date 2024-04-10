@@ -2,7 +2,7 @@ name: AWS-Infrastructure
 on:
   push:
     branches:
-      - tshego/feat/BGP-51-CICD
+      - main
 
 env:
   AWS_REGION: "eu-west-1"

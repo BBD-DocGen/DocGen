@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - lesedi/feature/release-monkey
     paths:
       - DocGenGUI/**
 

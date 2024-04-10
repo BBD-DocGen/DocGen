@@ -145,7 +145,7 @@ resource "aws_elastic_beanstalk_application" "docgen-beanstalk-app" {
 resource "aws_elastic_beanstalk_environment" "docgen-elastic-beanstalk-env" {
   name                = "docgen-elastic-beanstalk-env"
   application         = aws_elastic_beanstalk_application.docgen-beanstalk-app.name
-  solution_stack_name = "64bit Amazon Linux 2023 v3.0.5 running .NET 6"
+  solution_stack_name = "64bit Windows Server 2022 v2.14.1 running IIS 10.0"
   cname_prefix        = "docgen-app"
 
   setting {

@@ -1,13 +1,6 @@
 ﻿using DocGen.Classes;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using DocGen.Models;
+using OpenAI_API.Models;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,8 +8,8 @@ namespace DocGen.ViewModels
 {
     internal class GenerateDocsViewModel : BaseViewModel
     {
-        private string _fileContents;
-        public string FileContents
+        private FileModel _fileContents;
+        public FileModel FileContents
         {
             get => _fileContents;
             set
@@ -26,47 +19,50 @@ namespace DocGen.ViewModels
             }
         }
 
-        public ICommand SelectFileCommand{ get; }
-
-        public GenerateDocsViewModel()
+        public string FileSummary
         {
-            FileContents = "Docs Lol";
-
-            SelectFileCommand = new RelayCommand((param) => ExecuteSelectFile());
-        }
-
-        public void ExecuteSelectFile()
-        {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.Filter = "cs files (*.cs)|*.cs|All files (*.*)|*.*";
-            fileDialog.ShowDialog();
-
-            //Read the contents of the file into a stream
-            Stream fileStream = fileDialog.OpenFile();
-
-            using (StreamReader reader = new StreamReader(fileStream))
+            get => _fileContents.FileSummary;
+            set
             {
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                String pattern = "^\\s*(public|private)*\\s*(static)*\\s*(\\w+ \\w+)\\s?\\(.*\\).*$";
-                while ((line = reader.ReadLine()) != null) 
-                {
-                    if (!Regex.Match(line, pattern).Success) continue;
-
-                    sb.Append(line.Trim());
-                    sb.Append('\n');
-                }
-                FileContents = sb.ToString();
+                _fileContents.FileSummary = value;
+                OnPropertyChanged();
             }
         }
 
-        public async Task<string> generateDocs(string methodHeader)
+
+        public ICommand SelectFileCommand{ get; }
+        public ICommand SaveFileCommand { get; }
+
+
+        public GenerateDocsViewModel()
         {
-            StringBuilder sb = new StringBuilder();
+            SelectFileCommand = new RelayCommand((param) => ExecuteSelectFile());
+            SaveFileCommand = new RelayCommand((param) => ExecuteSaveFile());
+        }
 
+        public async void ExecuteSaveFile()
+        {
+            if (FileContents == null) 
+            {
+                MessageBox.Show("Please select a file");
+                return;
+            }
 
+            await S3.uploadFile(
+                FileContents.FileName == null ? "NO_NAME" : FileContents.FileName,
+                FileContents.FileSummary == null ? "Nothing to summarize" : FileContents.FileSummary
+            );
+        }
 
-            return sb.ToString();
+        public async void ExecuteSelectFile()
+        {
+            GetFileViaDialog file = new GetFileViaDialog();
+            FileContents = file.getFileContents();
+
+            if (FileContents != null)
+            {
+                FileSummary = await ChatGPT.getSummary(FileContents);
+            }
         }
     }
 }

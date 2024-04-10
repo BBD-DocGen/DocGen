@@ -1,19 +1,7 @@
 ﻿using DocGen.Views.Pages;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DocGen
 {
@@ -23,12 +11,30 @@ namespace DocGen
     public partial class MainWindow : Window
     {
         public static MainWindow Instance { get; private set; }
-        //public static Config Config { get; private set; }
         public MainWindow()
         {
+            SetEnvironmentVariable();
             InitializeComponent();
             Instance = this;
             Main.Content = new LoginPage();
+        }
+
+        private void SetEnvironmentVariable()
+        {
+            try
+            {
+                string path = @"..\..\..\env";
+
+                foreach (string file in File.ReadAllLines(path))
+                {
+                    string [] keyValuePair = file.Split('=');
+                    Environment.SetEnvironmentVariable(keyValuePair[0], keyValuePair[1]);
+                }
+            } 
+            catch (FileNotFoundException ex)
+            { 
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

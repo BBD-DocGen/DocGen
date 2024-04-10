@@ -12,4 +12,6 @@ public class UploadDocument
     public string UpDocName { get; set; }
         
     public string UpDocURL { get; set; }
+    
+    public virtual ICollection<GeneratedDocument> GeneratedDocuments { get; set; } = new List<GeneratedDocument>();
 }

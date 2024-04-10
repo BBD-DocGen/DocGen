@@ -14,4 +14,6 @@ public class GeneratedDocument
     public string GenDocName { get; set; }
 
     public string GenDocURL { get; set; }
+    
+    public virtual UploadDocument UploadDocument { get; set; }
 }

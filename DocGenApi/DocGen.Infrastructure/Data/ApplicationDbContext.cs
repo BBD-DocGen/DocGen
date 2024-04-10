@@ -14,6 +14,16 @@ namespace DocGen.Infrastructure.Data
         public DbSet<UploadDocument> UploadDocument { get; set; }
         
         public DbSet<GeneratedDocument> GeneratedDocument { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UploadDocument>()
+                .HasMany(ud => ud.GeneratedDocuments)
+                .WithOne(gd => gd.UploadDocument)
+                .HasForeignKey(gd => gd.UpDocID);
+            
+        }
+
 
     }
 }

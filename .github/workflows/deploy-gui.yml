@@ -1,10 +1,17 @@
 name: Deploy DocGen GUI
 
 on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
   push:
     branches:
       - main
-      - lesedi/feature/release-monkey
     paths:
       - DocGenGUI/**
 

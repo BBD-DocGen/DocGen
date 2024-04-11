@@ -22,8 +22,8 @@
             <RowDefinition Height="10*" />
         </Grid.RowDefinitions>
 
-        <Button Content="Select file" Grid.Row="0" Grid.Column="0"  Command="{Binding SelectFileCommand}"/>
-        <Button Content="View Documentation" Grid.Row="0" Grid.Column="3" Command="{Binding LoadFileCommand}"/>
+        <Button Content="Generate Documentation" Grid.Row="0" Grid.Column="0"  Command="{Binding SelectFileCommand}"/>
+        <Button Content="View Documentation" Grid.Row="0" Grid.Column="4" Command="{Binding LoadFileCommand}"/>
 
         <Label Content="{Binding FileName}" Grid.Row="1"/>
 

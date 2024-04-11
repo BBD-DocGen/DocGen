@@ -56,16 +56,7 @@ namespace DocGen.ViewModels
 
         public async void ExecuteSaveFile()
         {
-            if (FileContents == null) 
-            {
-                MessageBox.Show("Please select a file");
-                return;
-            }
-
-            await S3.uploadFile(
-                FileContents.FileName == null ? "NO_NAME" : FileContents.FileName,
-                FileContents.FileSummary == null ? "Nothing to summarize" : FileContents.FileSummary
-            );
+            
         }
 
         public void ExecuteLoadFile()
@@ -77,13 +68,13 @@ namespace DocGen.ViewModels
         {
             GetFileViaDialog file = new GetFileViaDialog();
             FileContents = file.getFileContents();
-            FileName = "Loading...............................";
+            FileSummary = "Loading...............................";
 
             if (FileContents != null)
             {
                 Content content = await Provider.uploadDocuAndGetGeneratedDoc(new Document
                 {
-                    fileName = FileContents.FileName, 
+                    fileName = FileContents.FileName,
                     content = FileContents.FileContents
                 });
 

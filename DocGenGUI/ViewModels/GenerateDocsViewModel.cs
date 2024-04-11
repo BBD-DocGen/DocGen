@@ -42,7 +42,6 @@ namespace DocGen.ViewModels
 
 
         public ICommand SelectFileCommand{ get; }
-        public ICommand SaveFileCommand { get; }
         public ICommand LoadFileCommand { get; }
 
 
@@ -50,22 +49,7 @@ namespace DocGen.ViewModels
         {
             _fileContents = new FileModel();
             SelectFileCommand = new RelayCommand((param) => ExecuteSelectFile());
-            SaveFileCommand = new RelayCommand((param) => ExecuteSaveFile());
             LoadFileCommand = new RelayCommand((param) => ExecuteLoadFile());
-        }
-
-        public async void ExecuteSaveFile()
-        {
-            if (FileContents == null) 
-            {
-                MessageBox.Show("Please select a file");
-                return;
-            }
-
-            await S3.uploadFile(
-                FileContents.FileName == null ? "NO_NAME" : FileContents.FileName,
-                FileContents.FileSummary == null ? "Nothing to summarize" : FileContents.FileSummary
-            );
         }
 
         public void ExecuteLoadFile()
@@ -77,7 +61,7 @@ namespace DocGen.ViewModels
         {
             GetFileViaDialog file = new GetFileViaDialog();
             FileContents = file.getFileContents();
-            FileName = "Loading...............................";
+            FileSummary = "Loading...............................Loading...............................";
 
             if (FileContents != null)
             {

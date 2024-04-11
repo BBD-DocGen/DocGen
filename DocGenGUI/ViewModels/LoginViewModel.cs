@@ -16,10 +16,36 @@ namespace DocGen.ViewModels
     internal class LoginViewModel : BaseViewModel
     {
         private Auth0Client client;
+        private bool _loading;
+        private string _loginBtnText;
+
+        public bool Loading 
+        {
+            get => _loading;
+            set 
+            {
+                _loading = value;
+                OnPropertyChanged();
+            } 
+        }
+
+        public string LogInBtnText 
+        {
+            get => _loginBtnText;
+            set
+            {
+                _loginBtnText = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand LoginCommand { get; }
 
         public LoginViewModel() 
         {
+            Loading = true;
+            LogInBtnText = "Login";
+
             LoginCommand = new RelayCommand((param) => ExecuteLogin());
             Auth0ClientOptions clientOptions = new Auth0ClientOptions
             {
@@ -31,6 +57,9 @@ namespace DocGen.ViewModels
 
         public async void ExecuteLogin()
         {
+            Loading = false;
+            LogInBtnText = "Loading...........";
+
             var audience = "https://docgen.com";
             var extraParameters = new Dictionary<string, string>();
             extraParameters.Add("audience", audience);
@@ -41,6 +70,8 @@ namespace DocGen.ViewModels
             if (loginResult.IsError)
             {
                 MessageBox.Show("Could not log in");
+                Loading = true;
+                LogInBtnText = "Login";
                 return;
             }
 
@@ -51,6 +82,8 @@ namespace DocGen.ViewModels
             if (!isloggedin)
             {
                 MessageBox.Show("Could not log in");
+                Loading = true;
+                LogInBtnText = "Login";
                 return;
             }
 

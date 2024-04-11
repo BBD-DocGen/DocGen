@@ -9,6 +9,6 @@
       Title="LoginPage">
 
     <Grid>
-        <Button Content="Log In" Width="250" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding LoginCommand}"/>
+        <Button IsEnabled="{Binding Loading}"  Content="{Binding LogInBtnText}" Width="250" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding LoginCommand}"/>
     </Grid>
 </Page>

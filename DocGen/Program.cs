@@ -40,11 +40,19 @@ namespace  Program
                   InterfaceText.insertBoundaryText();
                   Console.WriteLine("Please enter the full path of your source code file");
 
-                  var sourceCodeFile = Console.ReadLine();
-                //   var sourceCodeFileContent = File.ReadAllText(sourceCodeFile);
-                //var response = GenerateDocument(access_token,sourceCodeFile,sourceCodeFileContent);
-                // Console.WriteLine(SendHttpRequest.SendPostHttpRequest("https://reqres.in/api/users"));
-                // Console.WriteLine(SendHttpRequest.SendPostUserHttpRequest("localhost:5000/api/v1/user", access_token));
+                  var sourceCodeFilePath = Console.ReadLine();
+                  var sourceCodeFile = Path.GetFileName(sourceCodeFilePath);
+                  var sourceCodeFileContent = File.ReadAllText(sourceCodeFilePath);
+
+                  Console.WriteLine("sourceCodeFilePath " + sourceCodeFilePath);
+                  Console.WriteLine("sourceCodeFile " + sourceCodeFile);
+                  Console.WriteLine("sourceCodeFileContent " + sourceCodeFileContent);
+
+                  Document inputDocument = new Document(sourceCodeFile,sourceCodeFileContent);
+
+                  Content respone = await Provider.uploadDocuAndGetGeneratedDoc(inputDocument);
+
+                  Console.WriteLine(respone.content);
 
                   Console.WriteLine("Documentation generated based on source code file provided.");
                   InterfaceText.insertBoundaryText();
@@ -95,17 +103,10 @@ namespace  Program
                       access_token = LogIn.Login();
                       if (access_token != ""){
                         Console.WriteLine("access_token: " + access_token);
-                        // var loginCheck = await LogIn.LogInUserCheck(access_token);
-                        // Console.WriteLine("LogInUserCheck: " + loginCheck);
-                        CLIProvider.setHeader(access_token);
-                        var loginCheck = await CLIProvider.login();
+                        var loginCheck = await LogIn.LogInUserCheck(access_token);
                         if (loginCheck){
-                            Console.WriteLine("Log in success");
+                            signIn = true;
                         }
-                        else{
-                            Console.WriteLine("not success");
-                        }
-                        signIn = true;
                       }
                       break;
                   }

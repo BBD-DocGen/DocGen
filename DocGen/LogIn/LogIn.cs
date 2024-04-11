@@ -2,6 +2,7 @@ using RestSharp;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Net;
+using DocGen.Classes;
 
 class LogIn{
     public static string Login()
@@ -19,11 +20,11 @@ class LogIn{
                 }
                 else{
                   var responseObject = JsonConvert.DeserializeObject<dynamic>(response.Content);
-                  string verification_uri = responseObject.verification_uri;
-                  openUri(verification_uri);
+                  string verification_uri_complete = responseObject.verification_uri_complete;
+                  openUri(verification_uri_complete);
 
                   Console.WriteLine("Verification page has been opened on your default browser, or go to below link:");
-                  Console.WriteLine($"{responseObject.verification_uri}");
+                  Console.WriteLine($"{responseObject.verification_uri_complete}");
                   Console.WriteLine($"Your One-time Code is: {responseObject.user_code}, please use this to link your device\n");
                   Console.WriteLine();
                   Console.WriteLine("1. Continue if you are successfully connected");
@@ -38,7 +39,7 @@ class LogIn{
                       return "";
                     }
                     Console.WriteLine("Verification page has been opened on your default browser, or go to below link:");
-                    Console.WriteLine($"{responseObject.verification_uri}");
+                    Console.WriteLine($"{responseObject.verification_uri_complete}");
                     Console.WriteLine($"Your One-time Code is: {responseObject.user_code}");
                     Console.WriteLine("1. Continue if you are successfully connected");
                     Console.WriteLine("2. Exit log in");
@@ -53,7 +54,7 @@ class LogIn{
                   }
                   else{
                     responseObject = JsonConvert.DeserializeObject<dynamic>(response.Content);
-                    var access_token = responseObject.id_token;
+                    var access_token = responseObject.access_token;
                     InterfaceText.insertBoundaryText();
                     return access_token;
                   }
@@ -76,7 +77,7 @@ class LogIn{
       var client = new RestClient("https://dev-2f8sdpf6pls655l7.us.auth0.com/oauth/device/code");
       var request = new RestRequest();
       request.AddHeader("content-type", "application/x-www-form-urlencoded");
-      request.AddParameter("application/x-www-form-urlencoded", "client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&scope=openid&audience=https://docgen.com", ParameterType.RequestBody);
+      request.AddParameter("application/x-www-form-urlencoded", "client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&scope=openid%20profile%20email&audience=https://docgen.com", ParameterType.RequestBody);
       RestResponse response = null;
 
       try{
@@ -96,7 +97,7 @@ class LogIn{
       var client = new RestClient("https://dev-2f8sdpf6pls655l7.us.auth0.com/oauth/token");
       var request = new RestRequest();
       request.AddHeader("content-type", "application/x-www-form-urlencoded");
-      request.AddParameter("application/x-www-form-urlencoded", $"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code={responseObject.device_code}&client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&audience=https://docgen.com", ParameterType.RequestBody);
+      request.AddParameter("application/x-www-form-urlencoded", $"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code={responseObject.device_code}&client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7", ParameterType.RequestBody);
       RestResponse response = null;
 
       try{
@@ -110,8 +111,8 @@ class LogIn{
       return response;
     }
 
-    public static void openUri(string verification_uri){
-      string auth0VerificationUri = verification_uri;
+    public static void openUri(string verification_uri_complete){
+      string auth0VerificationUri = verification_uri_complete;
       var auth0VerificationUriInfo = new ProcessStartInfo {
           FileName = auth0VerificationUri,
           UseShellExecute = true
@@ -119,33 +120,12 @@ class LogIn{
       Process.Start(auth0VerificationUriInfo);
     }
 
-    public static async Task<string> LogInUserCheck(string access_token){
-      HttpClient client = new HttpClient();
-      var parameters = new Dictionary<string, string>{};
-
-      try
-      {
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {access_token}");
-        // client.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
-
-        var content = new FormUrlEncodedContent(parameters);
-        HttpResponseMessage response = await client.PostAsync("http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1/users",null);
-
-        if (response.IsSuccessStatusCode)
-        {
-            string responseBody = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("success");
-            Console.WriteLine(responseBody);
-            return responseBody;
-        }
-        else
-        {
-            return $"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}";
-        }
+    public static async Task<bool> LogInUserCheck(string access_token){
+      Provider.setHeader(access_token);
+      var loginCheck = await Provider.login();
+      if (loginCheck){
+        return true;
       }
-      catch (HttpRequestException e)
-      {
-        return $"HTTP Request Error: {e.Message}";
-      }
+      return false;
     }
 }

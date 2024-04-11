@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
@@ -24,6 +25,8 @@ class GenerateDocument{
 
           // Send a POST request with the parameters in the body
           HttpResponseMessage response = await client.PostAsync("localhost:5000/api/v1/uploaded-documents", content);
+
+
 
           // Check if the response is successful (status code 200)
           if (response.IsSuccessStatusCode)

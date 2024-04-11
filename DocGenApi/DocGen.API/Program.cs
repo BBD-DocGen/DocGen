@@ -11,15 +11,15 @@ using DocGen.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 //AWS CONFIG
-var awsOptions = builder.Configuration.GetSection("AWS");
-var accessKey = awsOptions["AccessKey"];
-var secretKey = awsOptions["SecretKey"];
-var region = awsOptions["Region"];
+IConfigurationSection awsOptions = builder.Configuration.GetSection("AWS");
+string accessKey = awsOptions["AccessKey"];
+string secretKey = awsOptions["SecretKey"];
+string region = awsOptions["Region"];
 
 if (!string.IsNullOrEmpty(accessKey) && !string.IsNullOrEmpty(secretKey) && !string.IsNullOrEmpty(region))
 {
-    var awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-    var awsConfig = new AmazonS3Config { RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(region) };
+    BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+    AmazonS3Config awsConfig = new AmazonS3Config { RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(region) };
     builder.Services.AddSingleton<IAmazonS3>(new AmazonS3Client(awsCredentials, awsConfig));
 }
 else
@@ -27,7 +27,7 @@ else
     throw new InvalidOperationException("AWS credentials and region must be provided.");
 }
 
-var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
+string domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -53,7 +53,7 @@ builder.Services.AddAuthorization(options =>
     ));
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UseRouting();
 app.UseAuthentication();

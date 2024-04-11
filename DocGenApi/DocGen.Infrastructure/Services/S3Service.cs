@@ -1,10 +1,6 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using DocGen.Core.Interfaces;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
 public class S3Service : IS3Service
 {
     private readonly IAmazonS3 _s3Client;
@@ -18,14 +14,14 @@ public class S3Service : IS3Service
     {
         try
         {
-            var request = new PutObjectRequest
+            PutObjectRequest request = new PutObjectRequest
             {
                 BucketName = bucketName,
                 Key = key,
                 ContentBody = content
             };
 
-            var response = await _s3Client.PutObjectAsync(request);
+            PutObjectResponse response = await _s3Client.PutObjectAsync(request);
 
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
             {

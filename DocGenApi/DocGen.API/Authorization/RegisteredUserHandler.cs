@@ -16,10 +16,10 @@ public class RegisteredUserHandler : AuthorizationHandler<RegisteredUserRequirem
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RegisteredUserRequirement requirement)
     {
-        using (var scope = _scopeFactory.CreateScope())
+        using (IServiceScope scope = _scopeFactory.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var subClaim = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            string subClaim = context.User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (subClaim is null)
             {
@@ -27,7 +27,7 @@ public class RegisteredUserHandler : AuthorizationHandler<RegisteredUserRequirem
                 return;
             }
             
-            var userExists = await dbContext.User.AnyAsync(u => u.UserSub == subClaim);
+            bool userExists = await dbContext.User.AnyAsync(user => user.UserSub == subClaim);
             if (userExists)
             {
                 context.Succeed(requirement);

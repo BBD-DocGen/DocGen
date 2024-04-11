@@ -1,6 +1,7 @@
 ﻿using DocGen.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,8 +15,8 @@ namespace DocGen.Classes
     {
         private static HttpClient client = new HttpClient();
 
-        private static readonly string API_URL = "http://localhost:3010/api/v1";
-        //private static readonly string API_URL = "http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1";
+        //private static readonly string API_URL = "http://localhost:5000/api/v1";
+        private static readonly string API_URL = "http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1";
 
         public static void setHeader(string token)
         {
@@ -41,23 +42,47 @@ namespace DocGen.Classes
 
         public static async Task<Content> uploadDocuAndGetGeneratedDoc(Document doc)
         {
-            var values = new Dictionary<string, string>
-            {
-                { "fileName", "hello.cs" },
-                { "content", "world" }
-            };
+            HttpResponseMessage response = await client
+                .PostAsJsonAsync<Document>($"{API_URL}/uploaded-documents", doc);
 
-            var content = new FormUrlEncodedContent(values);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<Content>();
+
+            return new Content();
+        }
+
+        public static async Task<ObservableCollection<GeneratedDocs>> getGeneratedDocs()
+        {
+            HttpResponseMessage response = await client
+                .GetAsync($"{API_URL}/generated-documents");
+
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<ObservableCollection<GeneratedDocs>>();
+
+            return new ObservableCollection<GeneratedDocs>();
+        }
+
+        public static async Task<ObservableCollection<GeneratedDocs>> getUploadedDocs()
+        {
+            HttpResponseMessage response = await client
+                .GetAsync($"{API_URL}/uploaded-documents");
+
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<ObservableCollection<GeneratedDocs>>();
+
+            return new ObservableCollection<GeneratedDocs>();
+        }
+
+        public static async Task<String> downloadFile(string url)
+        {
+            HttpClient client = new HttpClient();
 
             HttpResponseMessage response = await client
-                .PostAsync($"{API_URL}/uploaded-documents", content);
+                .GetAsync(url);
 
-            Content con = null;
-            string res = "";
-            if (response.IsSuccessStatusCode) 
-                res = await response.Content.ReadAsStringAsync();
+            string content = await response.Content.ReadAsStringAsync();
 
-            return con;
+            return content;
         }
     }
 }

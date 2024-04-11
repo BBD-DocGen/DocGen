@@ -58,7 +58,7 @@ jobs:
     - name: Download rel-monkey
       shell: pwsh
       run: |
-        Invoke-WebRequest -Uri "https://github.com/Release-Monkey/release-monkey/releases/download/latest/rel-monkey.exe" -OutFile "rel-monkey.exe"
+        Invoke-WebRequest -Uri "https://github.com/Release-Monkey/release-monkey/releases/download/latest/rmk.exe" -OutFile "rel-monkey.exe"
     - name: Load Release Key
       run: ./rel-monkey load-release-key "${{ secrets.RELEASE_KEY }}"
 

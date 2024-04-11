@@ -1,5 +1,6 @@
 ﻿using DocGen.Classes;
 using DocGen.Models;
+using DocGen.Views.Pages;
 using OpenAI_API.Models;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ namespace DocGen.ViewModels
     internal class GenerateDocsViewModel : BaseViewModel
     {
         private FileModel _fileContents;
+
         public FileModel FileContents
         {
             get => _fileContents;
@@ -29,15 +31,27 @@ namespace DocGen.ViewModels
             }
         }
 
+        public string FileName
+        {
+            get => _fileContents.FileName;
+            set {
+                _fileContents.FileName = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public ICommand SelectFileCommand{ get; }
         public ICommand SaveFileCommand { get; }
+        public ICommand LoadFileCommand { get; }
 
 
         public GenerateDocsViewModel()
         {
+            _fileContents = new FileModel();
             SelectFileCommand = new RelayCommand((param) => ExecuteSelectFile());
             SaveFileCommand = new RelayCommand((param) => ExecuteSaveFile());
+            LoadFileCommand = new RelayCommand((param) => ExecuteLoadFile());
         }
 
         public async void ExecuteSaveFile()
@@ -54,10 +68,16 @@ namespace DocGen.ViewModels
             );
         }
 
+        public void ExecuteLoadFile()
+        {
+            MainWindow.Instance.Main.Content = new ViewDocumentsPage();
+        }
+
         public async void ExecuteSelectFile()
         {
             GetFileViaDialog file = new GetFileViaDialog();
             FileContents = file.getFileContents();
+            FileName = "Loading...............................";
 
             if (FileContents != null)
             {
@@ -67,7 +87,8 @@ namespace DocGen.ViewModels
                     content = FileContents.FileContents
                 });
 
-                FileSummary = content.content ?? "";
+                FileSummary = content.content.Length == 0 ? "Sorry something went wrong..." : content.content;
+                FileName = content.content.Length == 0 ? "" : FileContents.FileName;
             }
         }
     }

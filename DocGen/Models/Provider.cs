@@ -1,12 +1,6 @@
 ﻿using DocGen.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace DocGen.Classes
@@ -51,17 +45,6 @@ namespace DocGen.Classes
             return new Content();
         }
 
-        // public static async Task<string> getAllGeneratedDocs()
-        // {
-        //     HttpResponseMessage response = await client
-        //         .GetAsync($"{API_URL}/uploaded-documents");
-
-        //     if (response.IsSuccessStatusCode)
-        //         return await response.Content.ReadAsStringAsync();
-
-        //     return "There are no ducoments to retrieve.";
-        // }
-
         public static async Task<List<GeneratedDocs>> getGeneratedDocs()
         {
             Console.WriteLine("Printing all your past generated documents...");
@@ -70,7 +53,6 @@ namespace DocGen.Classes
 
             if (response.IsSuccessStatusCode){
                 string responseString = await response.Content.ReadAsStringAsync();
-                // Console.WriteLine("responseString: \n" + responseString);
                 List<GeneratedDocs> generatedDocsList = JsonConvert.DeserializeObject<List<GeneratedDocs>>(responseString);
                 return generatedDocsList;
             }
@@ -86,7 +68,6 @@ namespace DocGen.Classes
 
             if (response.IsSuccessStatusCode){
                 string responseString = await response.Content.ReadAsStringAsync();
-                // Console.WriteLine("responseString: \n" + responseString);
                 List<UploadedDocs> generatedDocsList = JsonConvert.DeserializeObject<List<UploadedDocs>>(responseString);
                 return generatedDocsList;
             }

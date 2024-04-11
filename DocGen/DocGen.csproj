@@ -9,7 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Auth0.OidcClient.WPF" Version="4.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PlantUml.Net" Version="1.4.80" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
   </ItemGroup>
 

@@ -1,11 +1,21 @@
-﻿namespace  Program
+﻿using IdentityModel.OidcClient;
+
+using DocGen.Models;
+using DocGen.Classes;
+
+namespace  Program
 {
   class Program{
     private static bool signIn = false;
 
     static void Main(string[] args){
+        MainAsync().Wait();
+    }
+
+    static async Task MainAsync(){
       bool appRunning = true;
       string choice;
+      string access_token ="";
 
       InterfaceText.insertWelcomeText();
       InterfaceText.insertBoundaryText();
@@ -24,29 +34,64 @@
               choice = Console.ReadLine();
               Console.WriteLine();
 
-              string sourceCodeFilePath = "";
-              string documentationFilePath = "";
-
               switch (choice){
                 // Option 1 to generate document
                 case "1":
                   InterfaceText.insertBoundaryText();
-                  Console.WriteLine("Please enter the path of your source code file");
-                  sourceCodeFilePath = Console.ReadLine();
+                  Console.WriteLine("Please enter the full path of your source code file");
 
-                  Console.WriteLine("Please enter the path of your output documentation file");
-                  documentationFilePath = Console.ReadLine();
+                  var sourceCodeFilePath = Console.ReadLine();
+                  var sourceCodeFile = Path.GetFileName(sourceCodeFilePath);
+                  var sourceCodeFileContent = File.ReadAllText(sourceCodeFilePath);
+
+                  // Console.WriteLine("sourceCodeFilePath " + sourceCodeFilePath);
+                  // Console.WriteLine("sourceCodeFile " + sourceCodeFile);
+                  // Console.WriteLine("sourceCodeFileContent " + sourceCodeFileContent);
+
+                  Document inputDocument = new Document(sourceCodeFile,sourceCodeFileContent);
+
+                  Content respone = await Provider.uploadDocuAndGetGeneratedDoc(inputDocument);
+
+                  Console.WriteLine();
+                  Console.WriteLine(respone.content);
 
                   Console.WriteLine("Documentation generated based on source code file provided.");
                   InterfaceText.insertBoundaryText();
                   break;
-                // Option 2 to sign out
+                // Option 2 to retrieve all past documents
                 case "2":
+
+                    // var allGeneratedDocsTest = await Provider.getAllGeneratedDocs();
+                    // Console.WriteLine(allGeneratedDocsTest);
+                    var allGeneratedDocs = await Provider.getGeneratedDocs();
+                    // Console.WriteLine(await Provider.getAllGeneratedDocs());
+                    foreach (var generatedDoc in allGeneratedDocs){
+                      // Console.WriteLine(generatedDoc);
+                      Console.WriteLine("ID: " + generatedDoc.GenDocID);
+                      Console.WriteLine("Name: " + generatedDoc.GenDocName);
+                      Console.WriteLine("URL: " + generatedDoc.GenDocURL);
+                      Console.WriteLine();
+                    }
+                  break;
+                // Option 3 to retrieve one past document
+                case "3":
+
+                    var allUploadedDocs = await Provider.getUploadedDocs();
+                    foreach (UploadedDocs uploadedDoc in allUploadedDocs){
+                      // Console.WriteLine(uploadedDoc);
+                      Console.WriteLine("ID: " + uploadedDoc.UpDocID);
+                      Console.WriteLine("Name: " + uploadedDoc.UpDocName);
+                      Console.WriteLine("URL: " + uploadedDoc.UpDocURL);
+                      Console.WriteLine();
+                    }
+                  break;
+                // Option 4 to sign out
+                case "4":
                   signInRunning = false;
                   InterfaceText.insertBoundaryText();
                   break;
-                // Option 3 to exit the application
-                case "3":
+                // Option 5 to exit the application
+                case "5":
                   Console.WriteLine("Exiting the application...");
                   signInRunning = false;
                   signIn=false;
@@ -71,9 +116,13 @@
                   if (signIn != true){
                       InterfaceText.insertBoundaryText();
                       Console.WriteLine("Signing in...");
-                      string id_token = LogIn.Login();
-                      if (id_token != ""){
-                        signIn = true;
+                      access_token = LogIn.Login();
+                      if (access_token != ""){
+                        // Console.WriteLine("access_token: " + access_token);
+                        var loginCheck = await LogIn.LogInUserCheck(access_token);
+                        if (loginCheck){
+                            signIn = true;
+                        }
                       }
                       break;
                   }

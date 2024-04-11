@@ -71,13 +71,12 @@ jobs:
           run: dotnet test --no-restore --verbosity normal
 
         - name: Publish
-          env:
-            API_KEY: ${{ secrets.API_KEY }}
           run: dotnet publish -c Release -o '${{ github.workspace }}/out' DocGen.API.csproj
 
         - name: Zip Package
           run: |
             cd ${{ github.workspace }}/out/
+            get-content appsettings.json | %{$_ -replace "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",${{ secrets.API_KEY }}}
             Compress-Archive *.*, ./runtimes ${{ env.BUILD_ARTIFACT }}
             Copy-Item -Path '${{ github.workspace }}/DocGenApi/DocGen.API/aws-windows-deployment-manifest.json' -Destination ${{ github.workspace}}/out/
             Compress-Archive *.zip, aws-windows-deployment-manifest.json ${{ env.DEPLOY_PACKAGE_NAME }} 

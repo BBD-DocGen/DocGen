@@ -71,6 +71,8 @@ jobs:
           run: dotnet test --no-restore --verbosity normal
 
         - name: Publish
+          env:
+            API_KEY: ${{ secrets.API_KEY }}
           run: dotnet publish -c Release -o '${{ github.workspace }}/out' DocGen.API.csproj
 
         - name: Zip Package

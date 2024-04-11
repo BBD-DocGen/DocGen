@@ -44,14 +44,15 @@ namespace  Program
                   var sourceCodeFile = Path.GetFileName(sourceCodeFilePath);
                   var sourceCodeFileContent = File.ReadAllText(sourceCodeFilePath);
 
-                  Console.WriteLine("sourceCodeFilePath " + sourceCodeFilePath);
-                  Console.WriteLine("sourceCodeFile " + sourceCodeFile);
-                  Console.WriteLine("sourceCodeFileContent " + sourceCodeFileContent);
+                  // Console.WriteLine("sourceCodeFilePath " + sourceCodeFilePath);
+                  // Console.WriteLine("sourceCodeFile " + sourceCodeFile);
+                  // Console.WriteLine("sourceCodeFileContent " + sourceCodeFileContent);
 
                   Document inputDocument = new Document(sourceCodeFile,sourceCodeFileContent);
 
                   Content respone = await Provider.uploadDocuAndGetGeneratedDoc(inputDocument);
 
+                  Console.WriteLine();
                   Console.WriteLine(respone.content);
 
                   Console.WriteLine("Documentation generated based on source code file provided.");
@@ -59,25 +60,29 @@ namespace  Program
                   break;
                 // Option 2 to retrieve all past documents
                 case "2":
-                    Console.WriteLine("Printing all your past generated documents...");
+
+                    // var allGeneratedDocsTest = await Provider.getAllGeneratedDocs();
+                    // Console.WriteLine(allGeneratedDocsTest);
                     var allGeneratedDocs = await Provider.getGeneratedDocs();
                     // Console.WriteLine(await Provider.getAllGeneratedDocs());
                     foreach (var generatedDoc in allGeneratedDocs){
-                      Console.WriteLine(generatedDoc);
-                      Console.WriteLine(generatedDoc.GenDocID);
-                      Console.WriteLine(generatedDoc.GenDocName);
-                      Console.WriteLine(generatedDoc.GenDocURL);
+                      // Console.WriteLine(generatedDoc);
+                      Console.WriteLine("ID: " + generatedDoc.GenDocID);
+                      Console.WriteLine("Name: " + generatedDoc.GenDocName);
+                      Console.WriteLine("URL: " + generatedDoc.GenDocURL);
+                      Console.WriteLine();
                     }
                   break;
                 // Option 3 to retrieve one past document
                 case "3":
-                    Console.WriteLine("Printing all your past uploaded documents...");
+
                     var allUploadedDocs = await Provider.getUploadedDocs();
-                    foreach (GeneratedDocs uploadedDoc in allUploadedDocs){
-                      Console.WriteLine(uploadedDoc);
-                      Console.WriteLine(uploadedDoc.GenDocID);
-                      Console.WriteLine(uploadedDoc.GenDocName);
-                      Console.WriteLine(uploadedDoc.GenDocURL);
+                    foreach (UploadedDocs uploadedDoc in allUploadedDocs){
+                      // Console.WriteLine(uploadedDoc);
+                      Console.WriteLine("ID: " + uploadedDoc.UpDocID);
+                      Console.WriteLine("Name: " + uploadedDoc.UpDocName);
+                      Console.WriteLine("URL: " + uploadedDoc.UpDocURL);
+                      Console.WriteLine();
                     }
                   break;
                 // Option 4 to sign out
@@ -113,7 +118,7 @@ namespace  Program
                       Console.WriteLine("Signing in...");
                       access_token = LogIn.Login();
                       if (access_token != ""){
-                        Console.WriteLine("access_token: " + access_token);
+                        // Console.WriteLine("access_token: " + access_token);
                         var loginCheck = await LogIn.LogInUserCheck(access_token);
                         if (loginCheck){
                             signIn = true;

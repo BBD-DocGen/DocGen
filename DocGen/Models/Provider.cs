@@ -15,8 +15,8 @@ namespace DocGen.Classes
     {
         private static HttpClient client = new HttpClient();
 
-        private static readonly string API_URL = "http://localhost:5000/api/v1";
-        //private static readonly string API_URL = "http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1";
+        // private static readonly string API_URL = "http://localhost:5000/api/v1";
+        private static readonly string API_URL = "http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1";
 
         public static void setHeader(string token)
         {
@@ -51,37 +51,47 @@ namespace DocGen.Classes
             return new Content();
         }
 
-        public static async Task<string> getAllGeneratedDocs()
-        {
-            HttpResponseMessage response = await client
-                .GetAsync($"{API_URL}/uploaded-documents");
+        // public static async Task<string> getAllGeneratedDocs()
+        // {
+        //     HttpResponseMessage response = await client
+        //         .GetAsync($"{API_URL}/uploaded-documents");
 
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadAsStringAsync();
+        //     if (response.IsSuccessStatusCode)
+        //         return await response.Content.ReadAsStringAsync();
 
-            return "There are no ducoments to retrieve.";
-        }
+        //     return "There are no ducoments to retrieve.";
+        // }
 
         public static async Task<List<GeneratedDocs>> getGeneratedDocs()
         {
+            Console.WriteLine("Printing all your past generated documents...");
             HttpResponseMessage response = await client
                 .GetAsync($"{API_URL}/generated-documents");
 
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<List<GeneratedDocs>>();
+            if (response.IsSuccessStatusCode){
+                string responseString = await response.Content.ReadAsStringAsync();
+                // Console.WriteLine("responseString: \n" + responseString);
+                List<GeneratedDocs> generatedDocsList = JsonConvert.DeserializeObject<List<GeneratedDocs>>(responseString);
+                return generatedDocsList;
+            }
 
             return new List<GeneratedDocs>();
         }
 
-        public static async Task<List<GeneratedDocs>> getUploadedDocs()
+        public static async Task<List<UploadedDocs>> getUploadedDocs()
         {
+            Console.WriteLine("Printing all your past uploaded documents...");
             HttpResponseMessage response = await client
                 .GetAsync($"{API_URL}/uploaded-documents");
 
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<List<GeneratedDocs>>();
+            if (response.IsSuccessStatusCode){
+                string responseString = await response.Content.ReadAsStringAsync();
+                // Console.WriteLine("responseString: \n" + responseString);
+                List<UploadedDocs> generatedDocsList = JsonConvert.DeserializeObject<List<UploadedDocs>>(responseString);
+                return generatedDocsList;
+            }
 
-            return new List<GeneratedDocs>();
+            return new List<UploadedDocs>();
         }
     }
 }

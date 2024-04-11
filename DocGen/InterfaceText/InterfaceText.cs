@@ -23,8 +23,8 @@ class InterfaceText{
 
     public static void insertSignInOptions(){
       string signInOptions = "1. Generate Document\n";
-      signInOptions += "2. Check your past documents\n";
-      signInOptions += "3. Check your past document with id\n";
+      signInOptions += "2. Check your past generated documents\n";
+      signInOptions += "3. Check your past uploaded documents\n";
       signInOptions += "4. Sign out\n";
       signInOptions += "5. Exit";
       Console.WriteLine(signInOptions);

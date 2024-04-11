@@ -82,10 +82,6 @@ class LogIn{
 
       try{
         response = client.ExecutePost(request);
-
-        Console.WriteLine("response: \n" + JsonConvert.DeserializeObject<dynamic>(response.Content) +"\n");
-
-              Console.WriteLine(JsonConvert.DeserializeObject<dynamic>(response.Content).device_code);
       }
       catch (Exception ex){
             Console.WriteLine($"Error: {ex.Message}");
@@ -102,8 +98,6 @@ class LogIn{
 
       try{
         response = client.ExecutePost(request);
-
-                Console.WriteLine("response: \n" + JsonConvert.DeserializeObject<dynamic>(response.Content) +"\n");
       }
       catch (Exception ex){
             Console.WriteLine($"Error: {ex.Message}");

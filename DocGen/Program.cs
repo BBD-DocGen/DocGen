@@ -59,15 +59,26 @@ namespace  Program
                   break;
                 // Option 2 to retrieve all past documents
                 case "2":
-                    Console.WriteLine("Printing all your past documents...");
-                    //var response = retrieveAllDocuments(access_token);
+                    Console.WriteLine("Printing all your past generated documents...");
+                    var allGeneratedDocs = await Provider.getGeneratedDocs();
+                    // Console.WriteLine(await Provider.getAllGeneratedDocs());
+                    foreach (var generatedDoc in allGeneratedDocs){
+                      Console.WriteLine(generatedDoc);
+                      Console.WriteLine(generatedDoc.GenDocID);
+                      Console.WriteLine(generatedDoc.GenDocName);
+                      Console.WriteLine(generatedDoc.GenDocURL);
+                    }
                   break;
                 // Option 3 to retrieve one past document
                 case "3":
-                    InterfaceText.insertBoundaryText();
-                    Console.WriteLine("Please enter the name of your past document id");
-                    var fileId = Console.ReadLine();
-                    //var response = retrieveOneDocument(access_token,fileId);
+                    Console.WriteLine("Printing all your past uploaded documents...");
+                    var allUploadedDocs = await Provider.getUploadedDocs();
+                    foreach (GeneratedDocs uploadedDoc in allUploadedDocs){
+                      Console.WriteLine(uploadedDoc);
+                      Console.WriteLine(uploadedDoc.GenDocID);
+                      Console.WriteLine(uploadedDoc.GenDocName);
+                      Console.WriteLine(uploadedDoc.GenDocURL);
+                    }
                   break;
                 // Option 4 to sign out
                 case "4":
@@ -117,11 +128,6 @@ namespace  Program
                   appRunning = false;
                   signIn = true;
                   break;
-                // case "3":
-                //     var inputfile = Console.ReadLine();
-                //    Console.WriteLine( GenerateDocument.extractMethods(inputfile));
-                //   Console.WriteLine("Exiting the application...");
-                //   break;
               default:
                   Console.WriteLine("Invalid option. Please choose again.");
                   break;

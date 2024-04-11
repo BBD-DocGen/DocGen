@@ -1,4 +1,11 @@
 class InterfaceText{
+
+public int MyProperty { get; set; }
+      private int testnum = 0;
+      private string testString;
+
+      public bool testBool;
+
       public static void insertWelcomeText(){
       string welcomeText = "********************************************************\n";
       welcomeText += "********************************************************\n";
@@ -23,10 +30,8 @@ class InterfaceText{
 
     public static void insertSignInOptions(){
       string signInOptions = "1. Generate Document\n";
-      signInOptions += "2. Check your past documents\n";
-      signInOptions += "3. Check your past document with id\n";
-      signInOptions += "4. Sign out\n";
-      signInOptions += "5. Exit";
+      signInOptions += "2. Sign out\n";
+      signInOptions += "3. Exit";
       Console.WriteLine(signInOptions);
     }
 }

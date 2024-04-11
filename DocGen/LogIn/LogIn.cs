@@ -53,9 +53,9 @@ class LogIn{
                   }
                   else{
                     responseObject = JsonConvert.DeserializeObject<dynamic>(response.Content);
-                    var id_token = responseObject.id_token;
+                    var access_token = responseObject.id_token;
                     InterfaceText.insertBoundaryText();
-                    return id_token;
+                    return access_token;
                   }
                 }
             }
@@ -76,11 +76,15 @@ class LogIn{
       var client = new RestClient("https://dev-2f8sdpf6pls655l7.us.auth0.com/oauth/device/code");
       var request = new RestRequest();
       request.AddHeader("content-type", "application/x-www-form-urlencoded");
-      request.AddParameter("application/x-www-form-urlencoded", "client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&scope=openid", ParameterType.RequestBody);
+      request.AddParameter("application/x-www-form-urlencoded", "client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&scope=openid&audience=https://docgen.com", ParameterType.RequestBody);
       RestResponse response = null;
 
       try{
         response = client.ExecutePost(request);
+
+        Console.WriteLine("response: \n" + JsonConvert.DeserializeObject<dynamic>(response.Content) +"\n");
+
+              Console.WriteLine(JsonConvert.DeserializeObject<dynamic>(response.Content).device_code);
       }
       catch (Exception ex){
             Console.WriteLine($"Error: {ex.Message}");
@@ -92,11 +96,13 @@ class LogIn{
       var client = new RestClient("https://dev-2f8sdpf6pls655l7.us.auth0.com/oauth/token");
       var request = new RestRequest();
       request.AddHeader("content-type", "application/x-www-form-urlencoded");
-      request.AddParameter("application/x-www-form-urlencoded", $"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code={responseObject.device_code}&client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7", ParameterType.RequestBody);
+      request.AddParameter("application/x-www-form-urlencoded", $"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code={responseObject.device_code}&client_id=RvnPGiHVhtjPJ76vzfaIM0WmidvjRwl7&audience=https://docgen.com", ParameterType.RequestBody);
       RestResponse response = null;
 
       try{
         response = client.ExecutePost(request);
+
+                Console.WriteLine("response: \n" + JsonConvert.DeserializeObject<dynamic>(response.Content) +"\n");
       }
       catch (Exception ex){
             Console.WriteLine($"Error: {ex.Message}");
@@ -111,5 +117,35 @@ class LogIn{
           UseShellExecute = true
       };
       Process.Start(auth0VerificationUriInfo);
+    }
+
+    public static async Task<string> LogInUserCheck(string access_token){
+      HttpClient client = new HttpClient();
+      var parameters = new Dictionary<string, string>{};
+
+      try
+      {
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {access_token}");
+        // client.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
+
+        var content = new FormUrlEncodedContent(parameters);
+        HttpResponseMessage response = await client.PostAsync("http://docgen-app.eu-west-1.elasticbeanstalk.com/api/v1/users",null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("success");
+            Console.WriteLine(responseBody);
+            return responseBody;
+        }
+        else
+        {
+            return $"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}";
+        }
+      }
+      catch (HttpRequestException e)
+      {
+        return $"HTTP Request Error: {e.Message}";
+      }
     }
 }

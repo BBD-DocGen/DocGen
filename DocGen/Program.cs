@@ -1,11 +1,21 @@
-﻿namespace  Program
+﻿using IdentityModel.OidcClient;
+
+using DocGen.Models;
+using DocGen.Classes;
+
+namespace  Program
 {
   class Program{
     private static bool signIn = false;
 
     static void Main(string[] args){
+        MainAsync().Wait();
+    }
+
+    static async Task MainAsync(){
       bool appRunning = true;
       string choice;
+      string access_token ="";
 
       InterfaceText.insertWelcomeText();
       InterfaceText.insertBoundaryText();
@@ -24,29 +34,40 @@
               choice = Console.ReadLine();
               Console.WriteLine();
 
-              string sourceCodeFilePath = "";
-              string documentationFilePath = "";
-
               switch (choice){
                 // Option 1 to generate document
                 case "1":
                   InterfaceText.insertBoundaryText();
-                  Console.WriteLine("Please enter the path of your source code file");
-                  sourceCodeFilePath = Console.ReadLine();
+                  Console.WriteLine("Please enter the full path of your source code file");
 
-                  Console.WriteLine("Please enter the path of your output documentation file");
-                  documentationFilePath = Console.ReadLine();
+                  var sourceCodeFile = Console.ReadLine();
+                //   var sourceCodeFileContent = File.ReadAllText(sourceCodeFile);
+                //var response = GenerateDocument(access_token,sourceCodeFile,sourceCodeFileContent);
+                // Console.WriteLine(SendHttpRequest.SendPostHttpRequest("https://reqres.in/api/users"));
+                // Console.WriteLine(SendHttpRequest.SendPostUserHttpRequest("localhost:5000/api/v1/user", access_token));
 
                   Console.WriteLine("Documentation generated based on source code file provided.");
                   InterfaceText.insertBoundaryText();
                   break;
-                // Option 2 to sign out
+                // Option 2 to retrieve all past documents
                 case "2":
+                    Console.WriteLine("Printing all your past documents...");
+                    //var response = retrieveAllDocuments(access_token);
+                  break;
+                // Option 3 to retrieve one past document
+                case "3":
+                    InterfaceText.insertBoundaryText();
+                    Console.WriteLine("Please enter the name of your past document id");
+                    var fileId = Console.ReadLine();
+                    //var response = retrieveOneDocument(access_token,fileId);
+                  break;
+                // Option 4 to sign out
+                case "4":
                   signInRunning = false;
                   InterfaceText.insertBoundaryText();
                   break;
-                // Option 3 to exit the application
-                case "3":
+                // Option 5 to exit the application
+                case "5":
                   Console.WriteLine("Exiting the application...");
                   signInRunning = false;
                   signIn=false;
@@ -71,8 +92,19 @@
                   if (signIn != true){
                       InterfaceText.insertBoundaryText();
                       Console.WriteLine("Signing in...");
-                      string id_token = LogIn.Login();
-                      if (id_token != ""){
+                      access_token = LogIn.Login();
+                      if (access_token != ""){
+                        Console.WriteLine("access_token: " + access_token);
+                        // var loginCheck = await LogIn.LogInUserCheck(access_token);
+                        // Console.WriteLine("LogInUserCheck: " + loginCheck);
+                        CLIProvider.setHeader(access_token);
+                        var loginCheck = await CLIProvider.login();
+                        if (loginCheck){
+                            Console.WriteLine("Log in success");
+                        }
+                        else{
+                            Console.WriteLine("not success");
+                        }
                         signIn = true;
                       }
                       break;
@@ -84,6 +116,11 @@
                   appRunning = false;
                   signIn = true;
                   break;
+                // case "3":
+                //     var inputfile = Console.ReadLine();
+                //    Console.WriteLine( GenerateDocument.extractMethods(inputfile));
+                //   Console.WriteLine("Exiting the application...");
+                //   break;
               default:
                   Console.WriteLine("Invalid option. Please choose again.");
                   break;

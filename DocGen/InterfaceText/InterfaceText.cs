@@ -1,5 +1,5 @@
 
-namespace  Program
+namespace CliProgram
 {
     class InterfaceText{
         public static void insertWelcomeText(){

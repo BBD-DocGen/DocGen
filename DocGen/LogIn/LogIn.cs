@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System.Net;
 using DocGen.Classes;
 
-namespace  Program
+namespace CliProgram
 {
     class LogIn{
         public static string Login()

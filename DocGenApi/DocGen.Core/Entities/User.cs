@@ -7,5 +7,4 @@ public class User
         public string UserEmail { get; set; }
         
         public string UserSub { get; set; }
-    
 }

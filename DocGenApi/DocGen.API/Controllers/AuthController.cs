@@ -4,6 +4,7 @@ using System.Text.Json;
 using DocGen.Infrastructure.Data;
 using DocGen.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using DocGen.Core.Models;
 
 [Route("api/v1")]
 [ApiController]
@@ -28,34 +29,34 @@ public class AuthController : ControllerBase
             return BadRequest("Missing access token.");
         }
         
-        var userSub = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        string userSub = User.Claims.FirstOrDefault(claim => claim.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
         if (string.IsNullOrEmpty(userSub))
         {
-            return BadRequest("Missing user identifier in token.");
+            return StatusCode(401, "Unauthorized");
         }
 
-        var userInfo = await GetUserInfoAsync(accessToken);
+        UserInfo userInfo = await GetUserInfoAsync(accessToken);
         if (userInfo == null)
         {
             return BadRequest("Failed to retrieve user information.");
         }
 
-        var user = await CheckAndCreateUserAsync(userInfo.Name, userInfo.Email, userSub);
+        User user = await CheckAndCreateUserAsync(userInfo.Name, userInfo.Email, userSub);
         return Ok(new { Message = "Login successful", User = user });
     }
 
     private async Task<UserInfo> GetUserInfoAsync(string accessToken)
     {
-        var client = _httpClientFactory.CreateClient();
+        HttpClient client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-        var response = await client.GetAsync(_userInfoEndpoint);
+        HttpResponseMessage response = await client.GetAsync(_userInfoEndpoint);
         if (!response.IsSuccessStatusCode)
         {
             return null;
         }
 
-        var content = await response.Content.ReadAsStringAsync();
+        string content = await response.Content.ReadAsStringAsync();
         return JsonSerializer.Deserialize<UserInfo>(
             content, 
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
@@ -64,7 +65,7 @@ public class AuthController : ControllerBase
 
     private async Task<User> CheckAndCreateUserAsync(string name, string email, string userSub)
     {
-        var user = await _context.User.FirstOrDefaultAsync(u => u.UserSub == userSub);
+        User user = await _context.User.FirstOrDefaultAsync(user => user.UserSub == userSub);
         if (user == null)
         {
             user = new User { UserName = name, UserEmail = email, UserSub = userSub };
@@ -78,11 +79,5 @@ public class AuthController : ControllerBase
         }
         await _context.SaveChangesAsync();
         return user;
-    }
-
-    private class UserInfo
-    {
-        public string Email { get; set; }
-        public string Name { get; set; }
     }
 }

@@ -37,10 +37,24 @@ namespace DocGen.ViewModels
 
             var loginResult = await client.LoginAsync(extraParameters: extraParameters);
 
-            if (loginResult.IsError == false)
+
+            if (loginResult.IsError)
             {
-                MainWindow.Instance.Main.Content = new GenerateDocsPage();
+                MessageBox.Show("Could not log in");
+                return;
             }
+
+            Provider.setHeader(loginResult.AccessToken);
+
+            bool isloggedin = await Provider.login();
+
+            if (!isloggedin)
+            {
+                MessageBox.Show("Could not log in");
+                return;
+            }
+
+            MainWindow.Instance.Main.Content = new GenerateDocsPage();
         }
     }
 }

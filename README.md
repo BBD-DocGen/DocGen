@@ -2,4 +2,4 @@
 
 The link to our documentation 
 
-https://bbdnet-candle-stock-system.atlassian.net/jira/software/projects/BGP/
+https://bbdnet-candle-stock-system.atlassian.net/jira/your-work

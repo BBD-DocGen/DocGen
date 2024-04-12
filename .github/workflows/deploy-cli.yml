@@ -64,4 +64,4 @@ jobs:
 
     - name: Publish Release
       shell: pwsh
-      run: ./rel-monkey create-release "Release-${{ github.run_number }}" "https://github.com/Release-Monkey/release-monkey/releases/tag/Release-${{ github.run_number }}"
+      run: ./rel-monkey create-release "Cli Release-${{ github.run_number }}" "https://github.com/Release-Monkey/release-monkey/releases/tag/Release-${{ github.run_number }}"

@@ -14,7 +14,6 @@ namespace DocGen.Infrastructure.Services
         {
             _httpClient = httpClient;
             _apiKey = configuration["OpenAI:ApiKey"];
-            Console.WriteLine($"API Key (for debugging, remove this in production): {_apiKey}");
         }
 
         public async Task<string> GenerateSummaryAsync(string fileName, string fileContents)
@@ -36,31 +35,27 @@ namespace DocGen.Infrastructure.Services
             var requestBody = new
             {
                 model = "gpt-3.5-turbo", 
-                messages = messages,
+                messages,
             };
 
-            var serializedRequestBody = JsonSerializer.Serialize(requestBody);
+            string serializedRequestBody = JsonSerializer.Serialize(requestBody);
             Console.WriteLine($"Request Body: {serializedRequestBody}");
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _apiKey);
 
-            var response = await _httpClient.PostAsync(
+            HttpResponseMessage response = await _httpClient.PostAsync(
                 "https://api.openai.com/v1/chat/completions",
                 new StringContent(serializedRequestBody, Encoding.UTF8, "application/json"));
             
-            //TODO: Change this to use deserialization instead
+            string responseContent = await response.Content.ReadAsStringAsync();
+            JsonDocument doc = JsonDocument.Parse(responseContent);
+            JsonElement root = doc.RootElement;
+            JsonElement choices = root.GetProperty("choices");
+            JsonElement firstChoice = choices[0];
+            JsonElement message = firstChoice.GetProperty("message");
+            string content = message.GetProperty("content").GetString();
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(responseContent);
-            var root = doc.RootElement;
-            var choices = root.GetProperty("choices");
-            var firstChoice = choices[0];
-            var message = firstChoice.GetProperty("message");
-            var content = message.GetProperty("content").GetString();
-
-            Console.WriteLine($"Extracted Summary: {content}");
-
-            return content ?? "Summary could not be generated.";
+            return content ?? "Uploaded document was saved successfully, but a summary could not be generated.";
         }
     }
     

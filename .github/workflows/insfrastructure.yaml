@@ -75,7 +75,7 @@ jobs:
         - name: Zip Package
           run: |
             cd ${{ github.workspace }}/out/
-            (get-content appsettings.json | %{$_ -replace "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","${{ secrets.API_KEY }}"}) | Set-Content appsettings.json
+            (get-content appsettings.json | %{$_ -replace "sk-randomkey","${{ secrets.API_KEY }}"}) | Set-Content appsettings.json
             Compress-Archive *.*, ./runtimes ${{ env.BUILD_ARTIFACT }}
             Copy-Item -Path '${{ github.workspace }}/DocGenApi/DocGen.API/aws-windows-deployment-manifest.json' -Destination ${{ github.workspace}}/out/
             Compress-Archive *.zip, aws-windows-deployment-manifest.json ${{ env.DEPLOY_PACKAGE_NAME }} 

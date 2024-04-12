@@ -18,9 +18,9 @@ namespace DocGen.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UploadDocument>()
-                .HasMany(ud => ud.GeneratedDocuments)
-                .WithOne(gd => gd.UploadDocument)
-                .HasForeignKey(gd => gd.UpDocID);
+                .HasMany(uploadedDocument => uploadedDocument.GeneratedDocuments)
+                .WithOne(generatedDocument => generatedDocument.UploadDocument)
+                .HasForeignKey(generatedDocument => generatedDocument.UpDocID);
             
         }
 

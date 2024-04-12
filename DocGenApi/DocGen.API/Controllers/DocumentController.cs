@@ -5,6 +5,7 @@ using DocGen.Infrastructure.Data;
 using System.Security.Claims;
 using DocGen.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using DocGen.Core.Models;
 
 namespace DesignDocGen.API.Controllers
 {
@@ -35,7 +36,7 @@ namespace DesignDocGen.API.Controllers
                     return Unauthorized("User identity not found. Auth0 error.");
                 }
 
-                var user = await _dbContext.User.FirstOrDefaultAsync(u => u.UserSub == userSub);
+                User user = await _dbContext.User.FirstOrDefaultAsync(u => u.UserSub == userSub);
                 if (user == null)
                 {
                     return NotFound("User not registered. Please register before attempting this.");
@@ -46,7 +47,7 @@ namespace DesignDocGen.API.Controllers
                 string documentUrl = await _s3Service.UploadFileContentAsync(request.Content, bucketName, request.FileName);
 
                 
-                var uploadedDocument = new UploadDocument
+                UploadDocument uploadedDocument = new UploadDocument
                 {
                     UserID = user.UserId,
                     UpDocName = request.FileName,
@@ -56,12 +57,12 @@ namespace DesignDocGen.API.Controllers
                 await _dbContext.SaveChangesAsync();
                 
                 // Handle Generated Document
-                var summary = await _openAIService.GenerateSummaryAsync(request.FileName, request.Content);
+                string summary = await _openAIService.GenerateSummaryAsync(request.FileName, request.Content);
                 
                 string summaryFileName = $"{request.FileName}_Summary.txt";
                 string summaryDocumentUrl = await _s3Service.UploadFileContentAsync(summary, bucketName, summaryFileName);
                 
-                var generatedDocument = new GeneratedDocument
+                GeneratedDocument generatedDocument = new GeneratedDocument
                 {
                     UpDocID = uploadedDocument.UpDocID,
                     DocTypeID = 1,
@@ -82,13 +83,13 @@ namespace DesignDocGen.API.Controllers
         [HttpGet("uploaded-documents/{id?}")]
         public async Task<IActionResult> GetUploadedDocuments(int? id)
         {
-            var userSub = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            string userSub = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userSub == null)
             {
                 return Unauthorized("User identity not found.");
             }
 
-            var user = await _dbContext.User.FirstOrDefaultAsync(u => u.UserSub == userSub);
+            User user = await _dbContext.User.FirstOrDefaultAsync(user => user.UserSub == userSub);
             if (user == null)
             {
                 return NotFound("User not registered.");
@@ -96,8 +97,8 @@ namespace DesignDocGen.API.Controllers
 
             if (id.HasValue)
             {
-                var document = await _dbContext.UploadDocument
-                    .FirstOrDefaultAsync(d => d.UserID == user.UserId && d.UpDocID == id.Value);
+                UploadDocument document = await _dbContext.UploadDocument
+                    .FirstOrDefaultAsync(uploadDocument => uploadDocument.UserID == user.UserId && uploadDocument.UpDocID == id.Value);
                 if (document == null)
                 {
                     return NotFound("Uploaded document not found.");
@@ -106,27 +107,26 @@ namespace DesignDocGen.API.Controllers
             }
             else
             {
-                var documents = await _dbContext.UploadDocument
-                    .Where(d => d.UserID == user.UserId)
+                List<UploadDocument> documents = await _dbContext.UploadDocument
+                    .Where(uploadDocument => uploadDocument.UserID == user.UserId)
                     .ToListAsync();
                 return Ok(documents);
             }
         }
         
         // GENERATED DOCUMENTS
-        
         //Fetching Generated Docs
         [HttpGet("generated-documents/{id?}")]
         public async Task<IActionResult> GetGeneratedDocuments(int? id)
         {
-            var userSub = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            string userSub = User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
             if (userSub == null)
             {
                 return Unauthorized("User identity not found.");
             }
 
            
-            var user = await _dbContext.User.FirstOrDefaultAsync(u => u.UserSub == userSub);
+            User user = await _dbContext.User.FirstOrDefaultAsync(user => user.UserSub == userSub);
             if (user == null)
             {
                 return NotFound("User not registered.");
@@ -136,9 +136,9 @@ namespace DesignDocGen.API.Controllers
             {
 
                 var document = await _dbContext.GeneratedDocument
-                    .Include(d => d.UploadDocument)
-                    .Where(d => d.GenDocID == id.Value && d.UploadDocument.UserID == user.UserId)
-                    .Select(d => new { d.GenDocID, d.GenDocName, d.GenDocURL })
+                    .Include(generatedDocument => generatedDocument.UploadDocument)
+                    .Where(generatedDocument => generatedDocument.GenDocID == id.Value && generatedDocument.UploadDocument.UserID == user.UserId)
+                    .Select(generatedDocument => new { generatedDocument.GenDocID, generatedDocument.GenDocName, generatedDocument.GenDocURL })
                     .FirstOrDefaultAsync();
 
                 if (document == null)
@@ -151,19 +151,13 @@ namespace DesignDocGen.API.Controllers
             {
 
                 var documents = await _dbContext.GeneratedDocument
-                    .Include(d => d.UploadDocument) 
-                    .Where(d => d.UploadDocument.UserID == user.UserId)
-                    .Select(d => new { d.GenDocID, d.GenDocName, d.GenDocURL })
+                    .Include(generatedDocument => generatedDocument.UploadDocument) 
+                    .Where(generatedDocument => generatedDocument.UploadDocument.UserID == user.UserId)
+                    .Select(generatedDocument => new { generatedDocument.GenDocID, generatedDocument.GenDocName, generatedDocument.GenDocURL })
                     .ToListAsync();
 
                 return Ok(documents);
             }
         }
-    }
-
-    public class UploadRequest
-    {
-        public string FileName { get; set; }
-        public string Content { get; set; }
     }
 }
